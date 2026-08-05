@@ -1,0 +1,115 @@
+(() => {
+  const config = window.ALBUM_CONFIG || { maxFiles: 15 };
+
+  const form = document.getElementById('upload-form');
+  const btnCamera = document.getElementById('btn-camera');
+  const btnLibrary = document.getElementById('btn-library');
+  const inputCamera = document.getElementById('input-camera');
+  const inputLibrary = document.getElementById('input-library');
+  const previewGrid = document.getElementById('preview-grid');
+  const submitBtn = document.getElementById('submit-btn');
+  const feedback = document.getElementById('feedback');
+  const guestNameInput = document.getElementById('guestName');
+  const messageInput = document.getElementById('message');
+
+  let selectedFiles = [];
+
+  function showFeedback(message, type) {
+    feedback.textContent = message;
+    feedback.className = `feedback show ${type}`;
+  }
+
+  function hideFeedback() {
+    feedback.className = 'feedback';
+  }
+
+  function renderPreviews() {
+    previewGrid.innerHTML = '';
+    selectedFiles.forEach((file, index) => {
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      item.appendChild(img);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-btn';
+      removeBtn.textContent = '✕';
+      removeBtn.addEventListener('click', () => {
+        selectedFiles.splice(index, 1);
+        renderPreviews();
+      });
+      item.appendChild(removeBtn);
+
+      previewGrid.appendChild(item);
+    });
+
+    submitBtn.disabled = selectedFiles.length === 0;
+  }
+
+  function addFiles(fileList) {
+    const incoming = Array.from(fileList || []);
+    const room = config.maxFiles - selectedFiles.length;
+
+    if (incoming.length > room) {
+      showFeedback(`Você pode enviar no máximo ${config.maxFiles} fotos por vez.`, 'error');
+    } else {
+      hideFeedback();
+    }
+
+    selectedFiles = selectedFiles.concat(incoming.slice(0, Math.max(room, 0)));
+    renderPreviews();
+  }
+
+  btnCamera.addEventListener('click', () => inputCamera.click());
+  btnLibrary.addEventListener('click', () => inputLibrary.click());
+
+  inputCamera.addEventListener('change', (e) => {
+    addFiles(e.target.files);
+    e.target.value = '';
+  });
+
+  inputLibrary.addEventListener('change', (e) => {
+    addFiles(e.target.files);
+    e.target.value = '';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (selectedFiles.length === 0) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+    hideFeedback();
+
+    const formData = new FormData();
+    selectedFiles.forEach((file) => formData.append('photos', file));
+    if (guestNameInput.value.trim()) formData.append('guestName', guestNameInput.value.trim());
+    if (messageInput.value.trim()) formData.append('message', messageInput.value.trim());
+
+    try {
+      const response = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        showFeedback(data.error || 'Não foi possível enviar suas fotos. Tente novamente.', 'error');
+      } else {
+        const rejectedCount = (data.rejected || []).length;
+        const okMessage = rejectedCount > 0
+          ? `${data.accepted} foto(s) enviada(s) com sucesso — ${rejectedCount} não puderam ser processadas.`
+          : `${data.accepted} foto(s) enviada(s) com sucesso! Obrigado :)`;
+        showFeedback(okMessage, 'success');
+        selectedFiles = [];
+        renderPreviews();
+        form.reset();
+      }
+    } catch {
+      showFeedback('Falha de conexão. Verifique sua internet e tente novamente.', 'error');
+    } finally {
+      submitBtn.textContent = 'Enviar fotos';
+      submitBtn.disabled = selectedFiles.length === 0;
+    }
+  });
+})();

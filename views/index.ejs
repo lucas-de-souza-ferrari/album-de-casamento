@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title><%= coupleNames %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <p class="names"><%= coupleNames %></p>
+      <% if (weddingDate) { %><p class="date"><%= weddingDate %></p><% } %>
+    </div>
+
+    <svg class="wave-divider" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 15 Q 37.5 0 75 15 T 150 15 T 225 15 T 300 15 V30 H0 Z" fill="#DCEEF2"></path>
+    </svg>
+
+    <div class="card" style="text-align:center;">
+      <p style="margin-top:0;color:var(--ink-soft);">Ajude a completar nosso álbum com o seu olhar sobre a festa.</p>
+      <a class="btn btn-primary" href="/upload" style="text-decoration:none;">Enviar fotos</a>
+      <div style="height:10px;"></div>
+      <a class="btn" style="background:var(--ocean-pale);color:var(--ocean-deep);text-decoration:none;" href="/galeria">Ver galeria ao vivo</a>
+    </div>
+  </div>
+</body>
+</html>

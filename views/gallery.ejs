@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Galeria — <%= coupleNames %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="gallery-header">
+    <p class="names"><%= coupleNames %></p>
+    <p class="date">Fotos enviadas pelos convidados, ao vivo</p>
+  </div>
+
+  <div id="gallery-grid" class="gallery-grid">
+    <% if (photos.length === 0) { %>
+      <p class="gallery-empty" id="empty-state">Nenhuma foto ainda — seja o(a) primeiro(a) a enviar!</p>
+    <% } %>
+    <% photos.forEach((photo) => { %>
+      <div class="gallery-card" data-seq="<%= photo.seq %>" data-id="<%= photo.id %>">
+        <img src="/thumbnails/<%= photo.thumbnailFilename %>" loading="lazy" alt="Foto enviada por convidado" />
+        <% if (photo.guestName || photo.message) { %>
+          <div class="gallery-caption">
+            <% if (photo.guestName) { %><p class="guest-name"><%= photo.guestName %></p><% } %>
+            <% if (photo.message) { %><p class="message"><%= photo.message %></p><% } %>
+          </div>
+        <% } %>
+        <% if (canModerate) { %>
+          <button type="button" class="hide-btn" data-hide-id="<%= photo.id %>">Ocultar</button>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+
+  <dialog id="lightbox">
+    <img id="lightbox-img" src="" alt="" />
+  </dialog>
+
+  <p class="nav-links"><a href="/upload">← Enviar mais fotos</a></p>
+
+  <script>
+    window.ALBUM_CONFIG = {
+      lastSeq: <%= photos.length ? photos[0].seq : 0 %>,
+      canModerate: <%= canModerate ? 'true' : 'false' %>,
+      modToken: <%- JSON.stringify(modToken) %>
+    };
+  </script>
+  <script src="/js/gallery.js"></script>
+</body>
+</html>

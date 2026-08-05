@@ -1,0 +1,49 @@
+# Exemplo de virtual host Nginx para o site de casamento.
+# Copie para /etc/nginx/sites-available/album, ajuste o dominio e o caminho
+# do projeto, depois: ln -s .../sites-available/album /etc/nginx/sites-enabled/
+# e rode certbot --nginx -d seu-dominio.com.br para emitir o HTTPS (Let's Encrypt).
+
+upstream album_app {
+  server 127.0.0.1:3000;
+}
+
+server {
+  listen 80;
+  server_name seu-dominio.com.br;
+
+  client_max_body_size 160m;      # cobre o limite de MAX_REQUEST_SIZE_MB do .env
+  client_body_timeout 120s;       # conexoes de celular em Wi-Fi/4G podem ser lentas
+
+  # Segunda camada de rate limit (alem do express-rate-limit na aplicacao).
+  limit_req_zone $binary_remote_addr zone=album_upload:10m rate=10r/m;
+
+  location = /api/upload {
+    limit_req zone=album_upload burst=20 nodelay;
+    proxy_pass http://album_app;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # Fotos originais e thumbnails servidos direto do disco pelo Nginx,
+  # sem passar pelos processos Node — tira essa carga do app no pico.
+  location /uploads/ {
+    alias /var/www/album/uploads/;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  location /thumbnails/ {
+    alias /var/www/album/thumbnails/;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  location / {
+    proxy_pass http://album_app;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
