@@ -21,14 +21,29 @@ const app = express();
 app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', path.join(rootDir, 'views'));
+// Muda a cada restart do processo; usado para invalidar o cache de 7d do /js e /css nos guests.
+app.locals.assetVersion = Date.now();
 
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        // Os previews de upload usam URL.createObjectURL(file), que gera src blob:.
+        'img-src': ["'self'", 'data:', 'blob:'],
+        'media-src': ["'self'", 'blob:'],
+      },
+    },
+  })
+);
 app.use(compression());
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 app.use(express.json({ limit: '1mb' }));
 
 app.use('/css', express.static(path.join(rootDir, 'src', 'public', 'css'), { maxAge: '7d' }));
 app.use('/js', express.static(path.join(rootDir, 'src', 'public', 'js'), { maxAge: '7d' }));
+app.use('/images', express.static(path.join(rootDir, 'src', 'public', 'images'), { maxAge: '7d' }));
 
 // Em producao o Nginx deve servir estes dois caminhos diretamente do disco
 // (ver deploy/nginx.album.conf.example); manter aqui garante que tambem

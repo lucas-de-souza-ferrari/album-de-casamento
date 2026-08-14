@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/style.css?v=<%= assetVersion %>" />
 </head>
 <body>
   <div class="gallery-header">
@@ -19,9 +19,18 @@
     <% if (photos.length === 0) { %>
       <p class="gallery-empty" id="empty-state">Nenhuma foto ainda — seja o(a) primeiro(a) a enviar!</p>
     <% } %>
-    <% photos.forEach((photo) => { %>
-      <div class="gallery-card" data-seq="<%= photo.seq %>" data-id="<%= photo.id %>">
-        <img src="/thumbnails/<%= photo.thumbnailFilename %>" loading="lazy" alt="Foto enviada por convidado" />
+    <% photos.forEach((photo) => {
+      const isVideo = (photo.mimeType || '').startsWith('video/');
+    %>
+      <div
+        class="gallery-card"
+        data-seq="<%= photo.seq %>"
+        data-id="<%= photo.id %>"
+        data-type="<%= isVideo ? 'video' : 'photo' %>"
+        <% if (isVideo) { %>data-src="/uploads/<%= photo.localFilename %>"<% } %>
+      >
+        <img src="/thumbnails/<%= photo.thumbnailFilename %>" loading="lazy" alt="<%= isVideo ? 'Vídeo' : 'Foto' %> enviado(a) por convidado" />
+        <% if (isVideo) { %><span class="play-badge" aria-hidden="true">▶</span><% } %>
         <% if (photo.guestName || photo.message) { %>
           <div class="gallery-caption">
             <% if (photo.guestName) { %><p class="guest-name"><%= photo.guestName %></p><% } %>
@@ -37,6 +46,7 @@
 
   <dialog id="lightbox">
     <img id="lightbox-img" src="" alt="" />
+    <video id="lightbox-video" controls playsinline style="display: none"></video>
   </dialog>
 
   <p class="nav-links"><a href="/upload">← Enviar mais fotos</a></p>
@@ -48,6 +58,6 @@
       modToken: <%- JSON.stringify(modToken) %>
     };
   </script>
-  <script src="/js/gallery.js"></script>
+  <script src="/js/gallery.js?v=<%= assetVersion %>"></script>
 </body>
 </html>

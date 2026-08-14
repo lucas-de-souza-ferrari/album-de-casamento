@@ -89,7 +89,8 @@ export function markFailed(id, errorMessage, maxAttempts = env.queueMaxAttempts)
 
 export function listInitialForGallery(limit = env.galleryPageSize) {
   return db.prepare(`
-    SELECT rowid AS seq, id, guest_name AS guestName, message, thumbnail_filename AS thumbnailFilename,
+    SELECT rowid AS seq, id, guest_name AS guestName, message, local_filename AS localFilename,
+           thumbnail_filename AS thumbnailFilename, mime_type AS mimeType,
            thumb_status AS thumbStatus, created_at AS createdAt
     FROM photos
     WHERE hidden = 0 AND thumb_status = 'ready'
@@ -100,7 +101,8 @@ export function listInitialForGallery(limit = env.galleryPageSize) {
 
 export function listNewerForGallery(afterSeq, limit = env.galleryPageSize) {
   return db.prepare(`
-    SELECT rowid AS seq, id, guest_name AS guestName, message, thumbnail_filename AS thumbnailFilename,
+    SELECT rowid AS seq, id, guest_name AS guestName, message, local_filename AS localFilename,
+           thumbnail_filename AS thumbnailFilename, mime_type AS mimeType,
            thumb_status AS thumbStatus, created_at AS createdAt
     FROM photos
     WHERE hidden = 0 AND thumb_status = 'ready' AND rowid > ?

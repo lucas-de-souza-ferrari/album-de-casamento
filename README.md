@@ -12,7 +12,9 @@ Arquitetura completa e decisões de design: veja o plano em
 
 ## Desenvolvimento local
 
-Pré-requisitos: Node.js 18+, Redis rodando localmente (`redis-server`).
+Pré-requisitos: Node.js 18+, Redis rodando localmente (`redis-server`), `ffmpeg`
+e `ffprobe` no PATH (usados para checar duração e gerar o frame-poster dos
+vídeos enviados pelos convidados — em Debian/Ubuntu: `apt install ffmpeg`).
 
 > **Nota (Windows + nvm, ambiente de dev atual):** o `better-sqlite3` é um
 > módulo nativo compilado para uma versão específica do Node (não é
@@ -42,7 +44,9 @@ npm run generate-qrcode
 
 ## Deploy no VPS (sem Docker)
 
-1. **Node.js e Redis**: instale via apt (ou `nvm` para o Node) e `redis-server`.
+1. **Node.js, Redis e ffmpeg**: instale via apt (ou `nvm` para o Node),
+   `redis-server` e `ffmpeg` (`apt install ffmpeg` — fornece `ffmpeg` e
+   `ffprobe`, usados para processar os vídeos enviados pelos convidados).
    Garanta que o Redis só escuta em `127.0.0.1` (não exposto publicamente).
 2. **Clonar e instalar direto no VPS Linux** — não copie `node_modules`
    gerado no Windows: `sharp` e `better-sqlite3` são módulos nativos e

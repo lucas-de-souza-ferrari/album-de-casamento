@@ -13,6 +13,8 @@ pagesRouter.get('/upload', (req, res) => {
     weddingDate: env.weddingDate,
     maxFiles: env.maxFilesPerRequest,
     maxFileSizeMb: env.maxFileSizeMb,
+    maxVideoFileSizeMb: env.maxVideoFileSizeMb,
+    maxVideoDurationSeconds: env.maxVideoDurationSeconds,
     guestTextMaxLength: env.guestTextMaxLength,
   });
 });
