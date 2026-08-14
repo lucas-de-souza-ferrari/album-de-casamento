@@ -23,11 +23,11 @@ export const env = {
   s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
   s3Prefix: process.env.S3_PREFIX || 'uploads/',
 
-  maxFileSizeMb: int('MAX_FILE_SIZE_MB', 20),
-  maxVideoFileSizeMb: int('MAX_VIDEO_FILE_SIZE_MB', 200),
+  maxFileSizeMb: int('MAX_FILE_SIZE_MB', 50),
+  maxVideoFileSizeMb: int('MAX_VIDEO_FILE_SIZE_MB', 500),
   maxVideoDurationSeconds: int('MAX_VIDEO_DURATION_SECONDS', 90),
   maxFilesPerRequest: int('MAX_FILES_PER_REQUEST', 15),
-  maxRequestSizeMb: int('MAX_REQUEST_SIZE_MB', 150),
+  maxRequestSizeMb: int('MAX_REQUEST_SIZE_MB', 550),
   guestTextMaxLength: int('GUEST_TEXT_MAX_LENGTH', 140),
 
   queueTickMs: int('QUEUE_TICK_MS', 2000),
