@@ -111,9 +111,15 @@ export function listNewerForGallery(afterSeq, limit = env.galleryPageSize) {
   `).all(afterSeq, limit);
 }
 
-export function setHidden(id, hidden) {
-  const info = db.prepare('UPDATE photos SET hidden = ?, updated_at = ? WHERE id = ?')
-    .run(hidden ? 1 : 0, Date.now(), id);
+export function getById(id) {
+  return db.prepare(`
+    SELECT id, local_filename AS localFilename, thumbnail_filename AS thumbnailFilename, bucket_key AS bucketKey
+    FROM photos WHERE id = ?
+  `).get(id);
+}
+
+export function deletePhoto(id) {
+  const info = db.prepare('DELETE FROM photos WHERE id = ?').run(id);
   return info.changes > 0;
 }
 

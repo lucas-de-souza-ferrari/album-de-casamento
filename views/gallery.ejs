@@ -37,9 +37,7 @@
             <% if (photo.message) { %><p class="message"><%= photo.message %></p><% } %>
           </div>
         <% } %>
-        <% if (canModerate) { %>
-          <button type="button" class="hide-btn" data-hide-id="<%= photo.id %>">Ocultar</button>
-        <% } %>
+        <button type="button" class="remove-btn" data-remove-id="<%= photo.id %>">Remover</button>
       </div>
     <% }); %>
   </div>
@@ -53,9 +51,7 @@
 
   <script>
     window.ALBUM_CONFIG = {
-      lastSeq: <%= photos.length ? photos[0].seq : 0 %>,
-      canModerate: <%= canModerate ? 'true' : 'false' %>,
-      modToken: <%- JSON.stringify(modToken) %>
+      lastSeq: <%= photos.length ? photos[0].seq : 0 %>
     };
   </script>
   <script src="/js/gallery.js?v=<%= assetVersion %>"></script>

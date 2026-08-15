@@ -1,5 +1,5 @@
 (() => {
-  const config = window.ALBUM_CONFIG || { lastSeq: 0, canModerate: false, modToken: '' };
+  const config = window.ALBUM_CONFIG || { lastSeq: 0 };
   const POLL_MS = 6000;
 
   const grid = document.getElementById('gallery-grid');
@@ -56,14 +56,12 @@
       card.appendChild(caption);
     }
 
-    if (config.canModerate) {
-      const hideBtn = document.createElement('button');
-      hideBtn.type = 'button';
-      hideBtn.className = 'hide-btn';
-      hideBtn.textContent = 'Ocultar';
-      hideBtn.dataset.hideId = photo.id;
-      card.appendChild(hideBtn);
-    }
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-btn';
+    removeBtn.textContent = 'Remover';
+    removeBtn.dataset.removeId = photo.id;
+    card.appendChild(removeBtn);
 
     return card;
   }
@@ -88,18 +86,29 @@
       });
     }
 
-    const hideBtn = card.querySelector('.hide-btn');
-    if (hideBtn) {
-      hideBtn.addEventListener('click', async () => {
-        hideBtn.disabled = true;
+    const removeBtn = card.querySelector('.remove-btn');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', async () => {
+        const password = window.prompt('Senha para remover esta foto/vídeo:');
+        if (!password) return;
+
+        removeBtn.disabled = true;
         try {
-          const res = await fetch(`/api/photos/${hideBtn.dataset.hideId}/hide?mod=${encodeURIComponent(config.modToken)}`, {
-            method: 'PATCH',
+          const res = await fetch(`/api/photos/${removeBtn.dataset.removeId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
           });
-          if (res.ok) card.remove();
-          else hideBtn.disabled = false;
+          if (res.ok) {
+            card.remove();
+          } else {
+            const data = await res.json().catch(() => ({}));
+            window.alert(data.error || 'Não foi possível remover.');
+            removeBtn.disabled = false;
+          }
         } catch {
-          hideBtn.disabled = false;
+          window.alert('Falha de conexão. Tente novamente.');
+          removeBtn.disabled = false;
         }
       });
     }

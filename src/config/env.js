@@ -40,5 +40,5 @@ export const env = {
   uploadRateLimitMax: int('UPLOAD_RATE_LIMIT_MAX', 30),
 
   galleryPageSize: int('GALLERY_PAGE_SIZE', 24),
-  galleryModToken: process.env.GALLERY_MOD_TOKEN || '',
+  galleryDeletePassword: process.env.GALLERY_DELETE_PASSWORD || '1303',
 };

@@ -344,15 +344,22 @@ a {
     padding: 40px 20px;
 }
 
-.hide-btn {
+.remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
     border: none;
-    background: rgba(232, 153, 141, 0.9);
+    background: rgba(0, 0, 0, 0.55);
     color: #fff;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     border-radius: var(--radius-sm);
-    padding: 4px 8px;
-    margin-top: 6px;
+    padding: 3px 7px;
+    line-height: 1;
     cursor: pointer;
+}
+
+.remove-btn:hover {
+    background: rgba(200, 60, 60, 0.85);
 }
 
 dialog#lightbox {

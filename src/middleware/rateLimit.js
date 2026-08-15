@@ -31,3 +31,27 @@ export function uploadRateLimiter(req, res, next) {
     next();
   });
 }
+
+// Senha de remocao e curta (4 digitos): limite apertado por IP para tornar
+// forca bruta impraticavel, sem travar convidados legitimos que erraram uma vez.
+const baseDeleteRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new RedisStore({
+    prefix: 'album:rl:delete:',
+    sendCommand: (...args) => redisClient.call(...args),
+  }),
+  message: { error: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.' },
+});
+
+export function deleteRateLimiter(req, res, next) {
+  baseDeleteRateLimiter(req, res, (err) => {
+    if (err) {
+      console.error('Rate limiter indisponível (Redis fora do ar?), permitindo requisição:', err.message);
+      return next();
+    }
+    next();
+  });
+}
