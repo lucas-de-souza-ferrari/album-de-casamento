@@ -11,8 +11,8 @@ server {
   listen 80;
   server_name seu-dominio.com.br;
 
-  client_max_body_size 160m;      # cobre o limite de MAX_REQUEST_SIZE_MB do .env
-  client_body_timeout 120s;       # conexoes de celular em Wi-Fi/4G podem ser lentas
+  client_max_body_size 560m;      # cobre o limite de MAX_REQUEST_SIZE_MB do .env (550m + folga)
+  client_body_timeout 300s;       # video grande em Wi-Fi/4G de celular pode demorar pra subir
 
   # Segunda camada de rate limit (alem do express-rate-limit na aplicacao).
   limit_req_zone $binary_remote_addr zone=album_upload:10m rate=10r/m;

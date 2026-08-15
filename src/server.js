@@ -33,6 +33,10 @@ app.use(
         // Os previews de upload usam URL.createObjectURL(file), que gera src blob:.
         'img-src': ["'self'", 'data:', 'blob:'],
         'media-src': ["'self'", 'blob:'],
+        // Desativado: forcaria o navegador a tentar HTTPS pra CSS/JS/uploads
+        // mesmo quando o site roda em HTTP puro (sem dominio/certificado),
+        // quebrando o carregamento silenciosamente.
+        'upgrade-insecure-requests': null,
       },
     },
   })
