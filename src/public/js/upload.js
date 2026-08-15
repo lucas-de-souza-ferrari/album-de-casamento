@@ -2,12 +2,14 @@
     const config = window.ALBUM_CONFIG || { maxFiles: 15 }
 
     const form = document.getElementById('upload-form')
-    const btnCameraPhoto = document.getElementById('btn-camera-photo')
-    const btnCameraVideo = document.getElementById('btn-camera-video')
+    const btnCamera = document.getElementById('btn-camera')
     const btnLibrary = document.getElementById('btn-library')
     const inputCameraPhoto = document.getElementById('input-camera-photo')
     const inputCameraVideo = document.getElementById('input-camera-video')
     const inputLibrary = document.getElementById('input-library')
+    const cameraChoiceDialog = document.getElementById('camera-choice-dialog')
+    const choicePhotoBtn = document.getElementById('choice-photo')
+    const choiceVideoBtn = document.getElementById('choice-video')
     const previewGrid = document.getElementById('preview-grid')
     const submitBtn = document.getElementById('submit-btn')
     const feedback = document.getElementById('feedback')
@@ -70,9 +72,22 @@
         renderPreviews()
     }
 
-    btnCameraPhoto.addEventListener('click', () => inputCameraPhoto.click())
-    btnCameraVideo.addEventListener('click', () => inputCameraVideo.click())
+    btnCamera.addEventListener('click', () => cameraChoiceDialog.showModal())
     btnLibrary.addEventListener('click', () => inputLibrary.click())
+
+    choicePhotoBtn.addEventListener('click', () => {
+        cameraChoiceDialog.close()
+        inputCameraPhoto.click()
+    })
+
+    choiceVideoBtn.addEventListener('click', () => {
+        cameraChoiceDialog.close()
+        inputCameraVideo.click()
+    })
+
+    cameraChoiceDialog.addEventListener('click', (e) => {
+        if (e.target === cameraChoiceDialog) cameraChoiceDialog.close()
+    })
 
     inputCameraPhoto.addEventListener('change', (e) => {
         addFiles(e.target.files)
