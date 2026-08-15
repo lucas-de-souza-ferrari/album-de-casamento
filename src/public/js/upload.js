@@ -2,9 +2,11 @@
     const config = window.ALBUM_CONFIG || { maxFiles: 15 }
 
     const form = document.getElementById('upload-form')
-    const btnCamera = document.getElementById('btn-camera')
+    const btnCameraPhoto = document.getElementById('btn-camera-photo')
+    const btnCameraVideo = document.getElementById('btn-camera-video')
     const btnLibrary = document.getElementById('btn-library')
-    const inputCamera = document.getElementById('input-camera')
+    const inputCameraPhoto = document.getElementById('input-camera-photo')
+    const inputCameraVideo = document.getElementById('input-camera-video')
     const inputLibrary = document.getElementById('input-library')
     const previewGrid = document.getElementById('preview-grid')
     const submitBtn = document.getElementById('submit-btn')
@@ -68,10 +70,16 @@
         renderPreviews()
     }
 
-    btnCamera.addEventListener('click', () => inputCamera.click())
+    btnCameraPhoto.addEventListener('click', () => inputCameraPhoto.click())
+    btnCameraVideo.addEventListener('click', () => inputCameraVideo.click())
     btnLibrary.addEventListener('click', () => inputLibrary.click())
 
-    inputCamera.addEventListener('change', (e) => {
+    inputCameraPhoto.addEventListener('change', (e) => {
+        addFiles(e.target.files)
+        e.target.value = ''
+    })
+
+    inputCameraVideo.addEventListener('change', (e) => {
         addFiles(e.target.files)
         e.target.value = ''
     })
